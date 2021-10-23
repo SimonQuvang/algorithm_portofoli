@@ -1,3 +1,12 @@
+# This is a sample Python script.
+
+# Take point p as the origin.
+
+# Take each point q in the set and calculate the angle to point p
+
+# Sort the points by the angle
+
+# Check if any 3 points adjacent to p is equal.
 import math
 from dataclasses import dataclass
 
@@ -12,34 +21,43 @@ class Point:
         return [self.x, self.y]
 
 
+def calculate_slope(point1, point2):
+    if point1.x == point2.x:
+        slope = float("inf")
+    else:
+        slope = (point2.y - point1.y) / (point2.x - point1.x)
+    print(point1, point2, slope)
+
+
 def find_colinear_points(list_of_points):
     output = []
-    output2 = []
     for point1 in list_of_points:
         point1 = Point(angle=0, x=point1[0], y=point1[1])
-        angles = {}
+        angles = []
+        slopes = {}
         for point2 in list_of_points:
             if point2 == point1.get_point():
                 continue  # No reason to check the same point against itself, we know it is 0
             point2 = Point(angle=0, x=point2[0], y=point2[1])
+            calculate_slope(point1, point2)
             # Using atan2 to calculate the angle that point 2 has to point 1
             angle = math.atan2((point2.y - point1.y), (point2.x - point1.x))
             # Rounding the results, converting to degrees and setting point2s angle the result
             point2.angle = (round(math.degrees(angle)))
-            if angles.get(point2.angle):
-                angles.get(point2.angle).append(point2.get_point())
-                if len(angles.get(point2.angle)) > 2:
-                    line = angles.get(point2.angle)
-                    line.append(point1.get_point())
-                    output.append(line)
-            else:
-                angles[point2.angle] = [point2.get_point()]
+            angles.append(point2)
 
-        for line in output:
-            line.sort()
-            if line not in output2:
-                output2.append(line)
-    return output2
+        angles.sort()  # Sorting the list according to the angle(defined earlier in the dataclass)
+
+        for i in range(len(angles) - 2):
+            # checking if any point has 3 consecutively points with equal angle to point1
+            if angles[i].angle == angles[i + 1].angle and angles[i + 1].angle == angles[i + 2].angle:
+                # Adding the points that are colinear to a list.
+                temp_list = [point1.get_point(), angles[i].get_point(), angles[i + 1].get_point(),
+                             angles[i + 2].get_point()]
+                # Sorting the list so it can be compared to another sorted list.
+                output.append(temp_list)  # add the sorted list to the output list_of_points
+
+    return output
 
 
 if __name__ == '__main__':
