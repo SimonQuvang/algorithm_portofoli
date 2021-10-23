@@ -9,11 +9,11 @@
 # Check if any 3 points adjacent to p is equal.
 import math
 from dataclasses import dataclass
-import timeit
 
+import timeit
 @dataclass(order=True)
 class Point:
-    angle: int
+    slope: float
     x: int
     y: int
 
@@ -34,25 +34,29 @@ def find_colinear_points(list_of_points):
     lines = {}
     list_of_points.sort()
     for point1 in list_of_points:
-        point1 = Point(angle=0, x=point1[0], y=point1[1])
+        point1 = Point(slope=0, x=point1[0], y=point1[1])
         angles = []
         slopes = {}
+        points = []
         for point2 in list_of_points:
             if point2 == point1.get_point():
                 continue  # No reason to check the same point against itself, we know it is 0
-            point2 = Point(angle=0, x=point2[0], y=point2[1])
+            point2 = Point(slope=0, x=point2[0], y=point2[1])
             slope = calculate_slope(point1, point2)
-            if slopes.get(slope):
-                points = slopes.get(slope)
-                points.append(point2.get_point())
-                if len(points) > 2:
-                    points.append(point1.get_point())
-                    # print(points, slope)
-                    lines[slope] = points
+            point2.slope = slope
+            points.append(point2)
 
-            else:
-                slopes[slope] = [point2.get_point()]
-    return lines.values()
+        points.sort()
+
+        for i in range(len(points) - 2):
+            # checking if any point has 3 consecutively points with equal angle to point1
+            if points[i].slope == points[i + 1].slope and points[i + 1].slope == points[i + 2].slope:
+                # Adding the points that are colinear to a list.
+                temp_list = [point1.get_point(), points[i].get_point(), points[i + 1].get_point(),
+                             points[i + 2].get_point()]
+                lines[points[i].slope] = temp_list
+
+    return lines
 
 
 if __name__ == '__main__':
@@ -70,10 +74,10 @@ if __name__ == '__main__':
     print(timeit.timeit(), find_colinear_points(unit_test1))
 
     print(f'Results of the unit test 2 is: ')
-    print(find_colinear_points(unit_test2))
+    print(timeit.timeit(), find_colinear_points(unit_test2))
 
     print(f'Results of the unit test 3 is: ')
-    print(find_colinear_points(unit_test3))
+    print(timeit.timeit(), find_colinear_points(unit_test3))
 
     print(f'Results of the unit test 4 is: ')
-    print(find_colinear_points(unit_test4))
+    print(timeit.timeit(), find_colinear_points(unit_test4))

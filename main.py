@@ -8,6 +8,7 @@
 
 # Check if any 3 points adjacent to p is equal.
 import math
+import timeit
 from dataclasses import dataclass
 
 
@@ -64,7 +65,7 @@ if __name__ == '__main__':
     unit_test4 = [[2, 2], [3, 3], [4, 4], [7, 1], [14, 6], [9, 4], [1, 1], [1, 4], [1, 5], [1, 2], [2, 4]]
 
     print(f'Results of the unit test 1 is: ')
-    print(find_colinear_points(unit_test1))
+    print(timeit.timeit(), find_colinear_points(unit_test1))
 
     print(f'Results of the unit test 2 is: ')
     print(find_colinear_points(unit_test2))
